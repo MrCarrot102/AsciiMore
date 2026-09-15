@@ -9,10 +9,12 @@ import java.io.IOException;
  * <p>
  * Użycie:
  * Java AsciiArt <ścieżkaDoObrazu> [szerokośćWZnakach] [--color] [--invert]
- *
+ * <p>
+ * Nie jest to zbyt poyzteczne ale chetnie wykorzystam to do innego projektu kiedyś tam,
+ * w idealnym swiecie polaczyc to z kodem cpp ktory wczesniej napisalem AsciiCube
  */
 
-public class AsciiArt
+public class Main
 {
     // znaki od najciemniejszego do najjaśniejszego
     private static final String RAMP = "@%#*+=-;. ";
@@ -71,13 +73,13 @@ public class AsciiArt
         }
     }
 
-    // Skaluje obraz do zadanej szerokości znaków, zachoujac proporcje z korekta pod czcionke terminala
+    // skaluje obraz do zadanej szerokości znaków, zachoujac proporcje z korekta pod czcionke terminala
     private static BufferedImage resize(BufferedImage original, int targetWidth)
     {
         int originalWidth = original.getWidth();
         int originalHeight = original.getHeight();
 
-        int targetHeight = (int) ((double) originalHeight / originalWidth * tergetWidth * CHAR_ASPECT_RATIO);
+        int targetHeight = (int) ((double) originalHeight / originalWidth * targetWidth * CHAR_ASPECT_RATIO);
         if (targetHeight <= 0) targetHeight = 1;
 
         BufferedImage resized = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
@@ -87,10 +89,13 @@ public class AsciiArt
         return resized;
     }
 
-    // drukowanie obrazu jako ascii bo terminal ssie pale i nie wyswietla ladnych obrazkow
-    // nie wiem po co to komu ale moze
-    // pozdrawiam Cegiełkę kochaną i Grubaska :))
-    // moze ktos to przeczyta
+    /**
+     * drukowanie obrazu jako ascii bo terminal ssie pale i nie wyswietla ladnych obrazkow
+     * nie wiem po co to komu ale moze
+     * pozdrawiam Cegiełkę kochaną i Grubaska, i ludzi z ISSP :))
+     * I wszystkich który to moze czytaja :)
+     * moze ktos to przeczyta
+     */
     private static void printAscii(BufferedImage img, boolean color, boolean invert)
     {
         StringBuilder sb = new StringBuilder();
@@ -103,10 +108,32 @@ public class AsciiArt
                 Color c = new Color(rgb);
 
                 double luminance = 0.2126 * c.getRed() + 0.7152 * c.getGreen() + 0.0722 * c.getBlue();
-                // jeszcze trzeba skończyć ale poszedłem spać a dzisiaj dopisałem jedna linię i więcej mi się nie chce :( 
+                // jeszcze trzeba skończyć ale poszedłem spać a dzisiaj dopisałem jedna linię i więcej mi się nie chce :(
+                double normalized = luminance / 255.0;
+                if (invert) normalized = 1.0 - normalized;
+
+                int index = (int) (normalized * (RAMP.length() - 1));
+                char ch = RAMP.charAt(index);
+
+                if (color)
+                {
+                    sb.append(String.format("\u001B[38;2;%d;%d;%dm%c", c.getRed(), c.getGreen(), c.getBlue(), ch));
+                } else
+                {
+                    sb.append(ch);
+                }
             }
 
+            if (color) sb.append("\u001B[0m");
+            sb.append("\n");
         }
-    }
 
+        System.out.print(sb);
+    }
 }
+
+/**
+ * Trochę wspolczuje jak ktos czyta kod do tego ale w sumie powodzenia i milego
+ * ciekawe pomysly na wykorzystanie tego kodu wyslac pomysli na:
+ * MozeKiedysCosZTymZrobieZamiastMiecToWDupie@NiePrawdziwyMail.com
+ */
