@@ -10,7 +10,7 @@ Zero zależności zewnętrznych — tylko czysta Java (`javax.imageio` + `java.a
 ## Podgląd
  
 <div align="center">
-![demo](assets/cegielka.png)
+![demo](AsciiArt/src/cegielka.png)
  
 <sub>pozdrowienia dla kumatych XD</sub>
  
